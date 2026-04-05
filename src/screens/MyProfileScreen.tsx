@@ -105,7 +105,7 @@ export default function MyProfileScreen() {
     return (
       <div className="screen" style={{ padding: '0 0 24px' }}>
         <div style={headerStyle}>
-          <button onClick={() => setShowSettings(false)} style={{ color: 'var(--color-gray-600)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <button onClick={() => setShowSettings(false)} style={{ color: 'var(--brown-light)', display: 'flex', alignItems: 'center', gap: 6 }}>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             <span style={{ fontSize: 14 }}>Back</span>
           </button>
@@ -126,7 +126,7 @@ export default function MyProfileScreen() {
             <div style={sectionTitle}>Subscription</div>
             <div style={{ padding: '12px 0' }}>
               <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Connect — $12/month</div>
-              <div style={{ fontSize: 12, color: 'var(--color-gray-600)', lineHeight: 1.6 }}>
+              <div style={{ fontSize: 12, color: 'var(--brown-light)', lineHeight: 1.6 }}>
                 Flat rate. No tiers, no upsells, no ads. All features included for everyone.
               </div>
             </div>
@@ -138,7 +138,7 @@ export default function MyProfileScreen() {
             <SettingRow label="Data sold to advertisers" value="Never" highlight />
             <SettingRow label="Used for AI training" value="Never without consent" highlight />
             <SettingRow label="Profile visible to" value="Authenticated users only" />
-            <button style={{ marginTop: 12, width: '100%', padding: '11px', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-sm)', fontSize: 13, color: 'var(--color-gray-600)', background: 'none', cursor: 'pointer' }}>
+            <button style={{ marginTop: 12, width: '100%', padding: '11px', border: '1px solid var(--brown-border)', borderRadius: 'var(--radius-sm)', fontSize: 13, color: 'var(--brown-light)', background: 'none', cursor: 'pointer' }}>
               Download my data
             </button>
           </div>
@@ -147,7 +147,7 @@ export default function MyProfileScreen() {
           <div style={sectionStyle}>
             <div style={sectionTitle}>About</div>
             <SettingRow label="Version" value="1.0.0" />
-            <button onClick={() => navigate('/transparency')} style={{ marginTop: 8, width: '100%', padding: '11px', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-sm)', fontSize: 13, color: 'var(--color-teal)', fontWeight: 500, background: 'none', cursor: 'pointer', textAlign: 'left' }}>
+            <button onClick={() => navigate('/transparency')} style={{ marginTop: 8, width: '100%', padding: '11px', border: '1px solid var(--brown-border)', borderRadius: 'var(--radius-sm)', fontSize: 13, color: 'var(--sage)', fontWeight: 500, background: 'none', cursor: 'pointer', textAlign: 'left' }}>
               View transparency dashboard →
             </button>
           </div>
@@ -155,7 +155,7 @@ export default function MyProfileScreen() {
           {/* Sign out */}
           <button
             onClick={signOut}
-            style={{ width: '100%', padding: '14px', borderRadius: 'var(--radius-full)', border: '1px solid var(--color-gray-200)', fontSize: 14, fontWeight: 500, color: 'var(--color-black)', background: 'none', cursor: 'pointer', marginBottom: 12 }}
+            style={{ width: '100%', padding: '14px', borderRadius: 'var(--radius-full)', border: '1px solid var(--brown-border)', fontSize: 14, fontWeight: 500, color: 'var(--brown)', background: 'none', cursor: 'pointer', marginBottom: 12 }}
           >
             Sign out
           </button>
@@ -171,7 +171,7 @@ export default function MyProfileScreen() {
                 This will permanently delete your profile, matches, and messages. This cannot be undone.
               </p>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => setShowDeleteConfirm(false)} style={{ flex: 1, padding: '11px', borderRadius: 'var(--radius-full)', border: '1px solid var(--color-gray-200)', fontSize: 13, cursor: 'pointer', background: 'white' }}>Cancel</button>
+                <button onClick={() => setShowDeleteConfirm(false)} style={{ flex: 1, padding: '11px', borderRadius: 'var(--radius-full)', border: '1px solid var(--brown-border)', fontSize: 13, cursor: 'pointer', background: 'white' }}>Cancel</button>
                 <button onClick={handleDeleteAccount} style={{ flex: 1, padding: '11px', borderRadius: 'var(--radius-full)', background: '#cc0000', color: 'white', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>Delete</button>
               </div>
             </div>
@@ -186,9 +186,9 @@ export default function MyProfileScreen() {
     return (
       <div className="screen" style={{ padding: '0 0 24px' }}>
         <div style={headerStyle}>
-          <button onClick={() => setEditing(false)} style={{ color: 'var(--color-gray-600)', fontSize: 14 }}>Cancel</button>
+          <button onClick={() => setEditing(false)} style={{ color: 'var(--brown-light)', fontSize: 14 }}>Cancel</button>
           <span style={{ fontSize: 16, fontWeight: 600 }}>Edit Profile</span>
-          <button onClick={save} disabled={saving} style={{ color: 'var(--color-teal)', fontSize: 14, fontWeight: 600 }}>
+          <button onClick={save} disabled={saving} style={{ color: 'var(--sage)', fontSize: 14, fontWeight: 600 }}>
             {saving ? 'Saving…' : 'Save'}
           </button>
         </div>
@@ -197,14 +197,14 @@ export default function MyProfileScreen() {
           {/* Photo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <label style={{ cursor: 'pointer' }}>
-              <div style={{ width: 80, height: 80, borderRadius: '50%', background: (avatarPreview || profile.avatar_url) ? `url(${avatarPreview ?? profile.avatar_url}) center/cover` : 'var(--color-teal-dim)', border: '2px dashed var(--color-teal)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>
+              <div style={{ width: 80, height: 80, borderRadius: '50%', background: (avatarPreview || profile.avatar_url) ? `url(${avatarPreview ?? profile.avatar_url}) center/cover` : 'var(--sage-dim)', border: '2px dashed var(--sage)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>
                 {!avatarPreview && !profile.avatar_url && profile.name[0]}
               </div>
               <input type="file" accept="image/*" onChange={handlePhoto} style={{ display: 'none' }} />
             </label>
             <div>
               <div style={{ fontSize: 14, fontWeight: 500 }}>{profile.name}</div>
-              <div style={{ fontSize: 12, color: 'var(--color-teal)', marginTop: 2 }}>Tap to change photo</div>
+              <div style={{ fontSize: 12, color: 'var(--sage)', marginTop: 2 }}>Tap to change photo</div>
             </div>
           </div>
 
@@ -214,13 +214,13 @@ export default function MyProfileScreen() {
 
           <Field label="Bio">
             <textarea value={bio} onChange={e => setBio(e.target.value)} maxLength={300} rows={4} style={{ ...inputStyle, resize: 'none', lineHeight: 1.6 }} />
-            <div style={{ fontSize: 11, color: 'var(--color-gray-400)', textAlign: 'right', marginTop: 4 }}>{bio.length}/300</div>
+            <div style={{ fontSize: 11, color: 'var(--brown-light)', textAlign: 'right', marginTop: 4 }}>{bio.length}/300</div>
           </Field>
 
           <Field label="Looking for">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
               {intentions.map(opt => (
-                <button key={opt.id} onClick={() => setIntention(opt.id)} style={{ padding: '12px 14px', border: `1px solid ${intention === opt.id ? 'var(--color-teal)' : 'var(--color-gray-200)'}`, borderRadius: 'var(--radius-md)', background: intention === opt.id ? 'var(--color-teal-dim)' : 'white', color: intention === opt.id ? 'var(--color-teal)' : 'var(--color-black)', fontSize: 13, textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s' }}>
+                <button key={opt.id} onClick={() => setIntention(opt.id)} style={{ padding: '12px 14px', border: `1px solid ${intention === opt.id ? 'var(--sage)' : 'var(--brown-border)'}`, borderRadius: 'var(--radius-md)', background: intention === opt.id ? 'var(--sage-dim)' : 'white', color: intention === opt.id ? 'var(--sage)' : 'var(--brown)', fontSize: 13, textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s' }}>
                   {opt.label}
                 </button>
               ))}
@@ -230,7 +230,7 @@ export default function MyProfileScreen() {
           <Field label="Age range you're open to">
             <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 4 }}>
               <input type="number" min="18" max="99" value={ageMin} onChange={e => setAgeMin(e.target.value)} style={{ ...inputStyle, width: 80, textAlign: 'center' }} />
-              <span style={{ color: 'var(--color-gray-400)', fontSize: 13 }}>to</span>
+              <span style={{ color: 'var(--brown-light)', fontSize: 13 }}>to</span>
               <input type="number" min="18" max="99" value={ageMax} onChange={e => setAgeMax(e.target.value)} style={{ ...inputStyle, width: 80, textAlign: 'center' }} />
             </div>
           </Field>
@@ -238,7 +238,7 @@ export default function MyProfileScreen() {
           <Field label={`Relationship readiness — ${readinessLabels[readiness - 1]}`}>
             <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
               {[1,2,3,4,5].map(n => (
-                <button key={n} onClick={() => setReadiness(n)} style={{ flex: 1, padding: '10px 0', borderRadius: 'var(--radius-sm)', border: `1px solid ${readiness === n ? 'var(--color-teal)' : 'var(--color-gray-200)'}`, background: readiness === n ? 'var(--color-teal)' : 'white', color: readiness === n ? 'white' : 'var(--color-gray-600)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>{n}</button>
+                <button key={n} onClick={() => setReadiness(n)} style={{ flex: 1, padding: '10px 0', borderRadius: 'var(--radius-sm)', border: `1px solid ${readiness === n ? 'var(--sage)' : 'var(--brown-border)'}`, background: readiness === n ? 'var(--sage)' : 'white', color: readiness === n ? 'white' : 'var(--brown-light)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>{n}</button>
               ))}
             </div>
           </Field>
@@ -255,7 +255,7 @@ export default function MyProfileScreen() {
       <div style={headerStyle}>
         <div style={{ width: 60 }} />
         <span style={{ fontSize: 16, fontWeight: 600 }}>My Profile</span>
-        <button onClick={() => setShowSettings(true)} style={{ color: 'var(--color-gray-600)', width: 60, display: 'flex', justifyContent: 'flex-end' }}>
+        <button onClick={() => setShowSettings(true)} style={{ color: 'var(--brown-light)', width: 60, display: 'flex', justifyContent: 'flex-end' }}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <circle cx="10" cy="4" r="1.2" fill="currentColor"/>
             <circle cx="10" cy="10" r="1.2" fill="currentColor"/>
@@ -267,9 +267,9 @@ export default function MyProfileScreen() {
       {/* Hero */}
       <div style={{ position: 'relative' }}>
         <div style={{ height: 240, background: profile.avatar_url ? `url(${profile.avatar_url}) center/cover` : 'linear-gradient(160deg, #e8f0ef, #d0e4e3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {!profile.avatar_url && <div style={{ fontSize: 72, fontWeight: 700, color: 'var(--color-teal)', opacity: 0.3 }}>{profile.name[0]}</div>}
+          {!profile.avatar_url && <div style={{ fontSize: 72, fontWeight: 700, color: 'var(--sage)', opacity: 0.3 }}>{profile.name[0]}</div>}
         </div>
-        <button onClick={startEdit} style={{ position: 'absolute', bottom: 12, right: 12, padding: '8px 16px', background: 'white', borderRadius: 'var(--radius-full)', fontSize: 13, fontWeight: 500, color: 'var(--color-black)', boxShadow: 'var(--shadow-md)', cursor: 'pointer' }}>
+        <button onClick={startEdit} style={{ position: 'absolute', bottom: 12, right: 12, padding: '8px 16px', background: 'white', borderRadius: 'var(--radius-full)', fontSize: 13, fontWeight: 500, color: 'var(--brown)', boxShadow: 'var(--shadow-md)', cursor: 'pointer' }}>
           Edit profile
         </button>
       </div>
@@ -278,34 +278,34 @@ export default function MyProfileScreen() {
         {/* Name & age */}
         <div>
           <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.4px' }}>{profile.name}, {profile.age}</h2>
-          {profile.location && <p style={{ fontSize: 13, color: 'var(--color-gray-400)', marginTop: 2 }}>{profile.location}</p>}
+          {profile.location && <p style={{ fontSize: 13, color: 'var(--brown-light)', marginTop: 2 }}>{profile.location}</p>}
         </div>
 
         {/* Intention badge */}
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: 'var(--color-teal-dim)', borderRadius: 'var(--radius-full)', alignSelf: 'flex-start' }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-teal)' }} />
-          <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--color-teal)' }}>{intentionLabels[profile.intention]}</span>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: 'var(--sage-dim)', borderRadius: 'var(--radius-full)', alignSelf: 'flex-start' }}>
+          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--sage)' }} />
+          <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--sage)' }}>{intentionLabels[profile.intention]}</span>
         </div>
 
         {/* Bio */}
         {profile.bio ? (
-          <p style={{ fontSize: 14, lineHeight: 1.7, color: 'var(--color-gray-800)' }}>{profile.bio}</p>
+          <p style={{ fontSize: 14, lineHeight: 1.7, color: 'var(--brown)' }}>{profile.bio}</p>
         ) : (
-          <button onClick={startEdit} style={{ padding: '12px 14px', border: '1px dashed var(--color-gray-200)', borderRadius: 'var(--radius-md)', fontSize: 13, color: 'var(--color-gray-400)', textAlign: 'left', cursor: 'pointer', background: 'none' }}>
+          <button onClick={startEdit} style={{ padding: '12px 14px', border: '1px dashed var(--brown-border)', borderRadius: 'var(--radius-md)', fontSize: 13, color: 'var(--brown-light)', textAlign: 'left', cursor: 'pointer', background: 'none' }}>
             + Add a bio — people with bios get more connections
           </button>
         )}
 
         {/* Stats row */}
-        <div style={{ display: 'flex', gap: 1, border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', gap: 1, border: '1px solid var(--brown-border)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
           {[
             { label: 'Readiness', value: `${(profile as any).relationship_readiness ?? 3}/5` },
             { label: 'Age range', value: `${(profile as any).age_min ?? 18}–${(profile as any).age_max ?? 45}` },
             { label: 'Joined', value: new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }) },
           ].map((stat, i) => (
-            <div key={i} style={{ flex: 1, padding: '14px 8px', textAlign: 'center', borderRight: i < 2 ? '1px solid var(--color-gray-200)' : 'none' }}>
-              <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-teal)' }}>{stat.value}</div>
-              <div style={{ fontSize: 11, color: 'var(--color-gray-400)', marginTop: 2 }}>{stat.label}</div>
+            <div key={i} style={{ flex: 1, padding: '14px 8px', textAlign: 'center', borderRight: i < 2 ? '1px solid var(--brown-border)' : 'none' }}>
+              <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--sage)' }}>{stat.value}</div>
+              <div style={{ fontSize: 11, color: 'var(--brown-light)', marginTop: 2 }}>{stat.label}</div>
             </div>
           ))}
         </div>
@@ -315,10 +315,10 @@ export default function MyProfileScreen() {
 
         {/* Quick actions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <button onClick={startEdit} style={{ padding: '14px', borderRadius: 'var(--radius-full)', background: 'var(--color-black)', color: 'white', fontSize: 14, fontWeight: 500, cursor: 'pointer' }}>
+          <button onClick={startEdit} style={{ padding: '14px', borderRadius: 'var(--radius-full)', background: 'var(--brown)', color: 'white', fontSize: 14, fontWeight: 500, cursor: 'pointer' }}>
             Edit profile
           </button>
-          <button onClick={() => setShowSettings(true)} style={{ padding: '14px', borderRadius: 'var(--radius-full)', border: '1px solid var(--color-gray-200)', fontSize: 14, fontWeight: 500, color: 'var(--color-gray-600)', cursor: 'pointer', background: 'none' }}>
+          <button onClick={() => setShowSettings(true)} style={{ padding: '14px', borderRadius: 'var(--radius-full)', border: '1px solid var(--brown-border)', fontSize: 14, fontWeight: 500, color: 'var(--brown-light)', cursor: 'pointer', background: 'none' }}>
             Settings
           </button>
         </div>
@@ -339,23 +339,23 @@ function ProfileCompleteness({ profile, onEdit }: { profile: any, onEdit: () => 
   if (pct === 100) return null
 
   return (
-    <div style={{ padding: '14px', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-md)' }}>
+    <div style={{ padding: '14px', border: '1px solid var(--brown-border)', borderRadius: 'var(--radius-md)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
         <span style={{ fontSize: 13, fontWeight: 500 }}>Profile {pct}% complete</span>
-        <span style={{ fontSize: 12, color: 'var(--color-teal)', fontWeight: 500 }}>{score}/{checks.length}</span>
+        <span style={{ fontSize: 12, color: 'var(--sage)', fontWeight: 500 }}>{score}/{checks.length}</span>
       </div>
-      <div style={{ height: 4, background: 'var(--color-gray-200)', borderRadius: 2, marginBottom: 12 }}>
-        <div style={{ height: '100%', width: `${pct}%`, background: 'var(--color-teal)', borderRadius: 2 }} />
+      <div style={{ height: 4, background: 'var(--brown-border)', borderRadius: 2, marginBottom: 12 }}>
+        <div style={{ height: '100%', width: `${pct}%`, background: 'var(--sage)', borderRadius: 2 }} />
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
         {checks.map(c => (
-          <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 8px', background: c.done ? '#e8f5ed' : 'var(--color-gray-100)', borderRadius: 'var(--radius-full)' }}>
-            <div style={{ width: 5, height: 5, borderRadius: '50%', background: c.done ? '#2C7A4B' : 'var(--color-gray-400)' }} />
-            <span style={{ fontSize: 11, color: c.done ? '#2C7A4B' : 'var(--color-gray-600)' }}>{c.label}</span>
+          <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 8px', background: c.done ? '#e8f5ed' : 'var(--cream-dark)', borderRadius: 'var(--radius-full)' }}>
+            <div style={{ width: 5, height: 5, borderRadius: '50%', background: c.done ? '#2C7A4B' : 'var(--brown-light)' }} />
+            <span style={{ fontSize: 11, color: c.done ? '#2C7A4B' : 'var(--brown-light)' }}>{c.label}</span>
           </div>
         ))}
       </div>
-      <button onClick={onEdit} style={{ fontSize: 12, color: 'var(--color-teal)', fontWeight: 500, background: 'none', cursor: 'pointer' }}>
+      <button onClick={onEdit} style={{ fontSize: 12, color: 'var(--sage)', fontWeight: 500, background: 'none', cursor: 'pointer' }}>
         Complete your profile →
       </button>
     </div>
@@ -365,7 +365,7 @@ function ProfileCompleteness({ profile, onEdit }: { profile: any, onEdit: () => 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--color-gray-600)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{label}</div>
+      <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--brown-light)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{label}</div>
       {children}
     </div>
   )
@@ -373,9 +373,9 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function SettingRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid var(--color-gray-100)' }}>
-      <span style={{ fontSize: 13, color: 'var(--color-gray-600)' }}>{label}</span>
-      <span style={{ fontSize: 13, fontWeight: 500, color: highlight ? 'var(--color-teal)' : 'var(--color-black)' }}>{value}</span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid var(--cream-dark)' }}>
+      <span style={{ fontSize: 13, color: 'var(--brown-light)' }}>{label}</span>
+      <span style={{ fontSize: 13, fontWeight: 500, color: highlight ? 'var(--sage)' : 'var(--brown)' }}>{value}</span>
     </div>
   )
 }
@@ -383,7 +383,7 @@ function SettingRow({ label, value, highlight }: { label: string; value: string;
 const headerStyle: React.CSSProperties = {
   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
   padding: '14px 16px',
-  borderBottom: '1px solid var(--color-gray-200)',
+  borderBottom: '1px solid var(--brown-border)',
   background: 'white',
   position: 'sticky', top: 0, zIndex: 10,
 }
@@ -391,20 +391,20 @@ const headerStyle: React.CSSProperties = {
 const sectionStyle: React.CSSProperties = {
   marginBottom: 20,
   padding: '14px',
-  border: '1px solid var(--color-gray-200)',
+  border: '1px solid var(--brown-border)',
   borderRadius: 'var(--radius-md)',
 }
 
 const sectionTitle: React.CSSProperties = {
   fontSize: 11, fontWeight: 600,
   textTransform: 'uppercase', letterSpacing: '0.08em',
-  color: 'var(--color-gray-400)',
+  color: 'var(--brown-light)',
   marginBottom: 8,
 }
 
 const inputStyle: React.CSSProperties = {
   width: '100%', padding: '12px 14px',
-  border: '1px solid var(--color-gray-200)',
+  border: '1px solid var(--brown-border)',
   borderRadius: 'var(--radius-md)',
   fontFamily: 'var(--font)', fontSize: 14,
   outline: 'none', background: 'white',

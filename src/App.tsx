@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useState } from 'react'
 import { AuthProvider, useAuth } from './lib/AuthContext'
+import SplashScreen from './components/SplashScreen'
 import BottomNav from './components/BottomNav'
 import AuthScreen from './screens/AuthScreen'
 import ProfileSetupScreen from './screens/ProfileSetupScreen'
@@ -23,7 +25,7 @@ function AppRoutes() {
 
   if (loading) return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: 28, height: 28, border: '2px solid #e8e8e8', borderTop: '2px solid #2C5F5D', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <div style={{ width: 20, height: 20, border: '1px solid var(--brown-border)', borderTop: '1px solid var(--sage)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
@@ -54,10 +56,13 @@ function AppRoutes() {
 }
 
 export default function App() {
+  const [splashDone, setSplashDone] = useState(false)
+
   return (
     <BrowserRouter>
       <AuthProvider>
         <div className="app-shell">
+          {!splashDone && <SplashScreen onDone={() => setSplashDone(true)} />}
           <AppRoutes />
         </div>
       </AuthProvider>

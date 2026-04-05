@@ -10,18 +10,18 @@ export default function TransparencyScreen() {
       {/* Header */}
       <div style={{
         padding: '16px 20px 14px',
-        background: 'var(--color-white)',
-        borderBottom: '1px solid var(--color-gray-200)',
+        background: 'var(--cream)',
+        borderBottom: '1px solid var(--brown-border)',
         display: 'flex', alignItems: 'center', gap: 12,
       }}>
-        <button onClick={() => navigate('/profile')} style={{ background: 'none', color: 'var(--color-gray-600)' }}>
+        <button onClick={() => navigate('/profile')} style={{ background: 'none', color: 'var(--brown-light)' }}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M13 4L7 10L13 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
         <div>
           <h2 style={{ fontSize: 17, fontWeight: 600, letterSpacing: '-0.3px' }}>Transparency Dashboard</h2>
-          <p style={{ fontSize: 11, color: 'var(--color-gray-400)' }}>How the app makes decisions about you</p>
+          <p style={{ fontSize: 11, color: 'var(--brown-light)' }}>How the app makes decisions about you</p>
         </div>
       </div>
 
@@ -36,23 +36,23 @@ export default function TransparencyScreen() {
 
         {/* Algorithm */}
         <Section title="Why you see who you see">
-          <div style={{ fontSize: 13, color: 'var(--color-gray-600)', lineHeight: 1.6, marginBottom: 8 }}>
+          <div style={{ fontSize: 13, color: 'var(--brown-light)', lineHeight: 1.6, marginBottom: 8 }}>
             Profiles shown are filtered by:
           </div>
           {['Shared intention', 'Distance preference', 'Age range', 'Active in last 7 days'].map(f => (
             <div key={f} style={{
               display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6,
             }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-teal)', flexShrink: 0 }} />
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--sage)', flexShrink: 0 }} />
               <span style={{ fontSize: 13 }}>{f}</span>
             </div>
           ))}
           <div style={{
             marginTop: 10, padding: '10px 12px',
-            background: 'var(--color-teal-dim)',
+            background: 'var(--sage-dim)',
             borderRadius: 'var(--radius-sm)',
           }}>
-            <p style={{ fontSize: 12, color: 'var(--color-teal)', lineHeight: 1.5 }}>
+            <p style={{ fontSize: 12, color: 'var(--sage)', lineHeight: 1.5 }}>
               Paying users do not appear more frequently. Filters are available to all users equally.
             </p>
           </div>
@@ -66,11 +66,11 @@ export default function TransparencyScreen() {
           <button style={{
             marginTop: 10, width: '100%',
             padding: '10px 14px',
-            border: '1px solid var(--color-gray-200)',
+            border: '1px solid var(--brown-border)',
             borderRadius: 'var(--radius-sm)',
             background: 'transparent',
             fontSize: 12, fontWeight: 500,
-            color: 'var(--color-gray-600)',
+            color: 'var(--brown-light)',
             cursor: 'pointer',
           }}>
             Download your data
@@ -79,14 +79,14 @@ export default function TransparencyScreen() {
 
         {/* Subscription */}
         <Section title="What your subscription includes">
-          <div style={{ fontSize: 13, color: 'var(--color-gray-600)', lineHeight: 1.6, marginBottom: 4 }}>
+          <div style={{ fontSize: 13, color: 'var(--brown-light)', lineHeight: 1.6, marginBottom: 4 }}>
             $12/month flat. No tiers, no upsells.
           </div>
           {['Unlimited connections', 'All filters included', 'No ads, ever', 'Full message history'].map(f => (
             <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <circle cx="7" cy="7" r="6.5" fill="var(--color-teal)" opacity="0.15"/>
-                <path d="M4 7L6 9L10 5" stroke="var(--color-teal)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="7" cy="7" r="6.5" fill="var(--sage)" opacity="0.15"/>
+                <path d="M4 7L6 9L10 5" stroke="var(--sage)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <span style={{ fontSize: 13 }}>{f}</span>
             </div>
@@ -101,17 +101,17 @@ export default function TransparencyScreen() {
 function Section({ title, children }: { title: string, children: React.ReactNode }) {
   return (
     <div style={{
-      background: 'var(--color-white)',
+      background: 'var(--cream)',
       borderRadius: 'var(--radius-md)',
-      border: '1px solid var(--color-gray-200)',
+      border: '1px solid var(--brown-border)',
       overflow: 'hidden',
     }}>
       <div style={{
         padding: '12px 16px',
-        borderBottom: '1px solid var(--color-gray-200)',
+        borderBottom: '1px solid var(--brown-border)',
         fontSize: 12, fontWeight: 600,
         textTransform: 'uppercase', letterSpacing: '0.07em',
-        color: 'var(--color-gray-400)',
+        color: 'var(--brown-light)',
       }}>
         {title}
       </div>
@@ -125,12 +125,12 @@ function Section({ title, children }: { title: string, children: React.ReactNode
 function MetricRow({ label, value, note, highlight }: { label: string, value: string, note?: string, highlight?: boolean }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-      <span style={{ fontSize: 13, color: 'var(--color-gray-600)' }}>{label}</span>
+      <span style={{ fontSize: 13, color: 'var(--brown-light)' }}>{label}</span>
       <div style={{ textAlign: 'right' }}>
-        <span style={{ fontSize: 13, fontWeight: 500, color: highlight ? 'var(--color-teal)' : 'var(--color-black)' }}>
+        <span style={{ fontSize: 13, fontWeight: 500, color: highlight ? 'var(--sage)' : 'var(--brown)' }}>
           {value}
         </span>
-        {note && <div style={{ fontSize: 11, color: 'var(--color-gray-400)', marginTop: 1 }}>{note}</div>}
+        {note && <div style={{ fontSize: 11, color: 'var(--brown-light)', marginTop: 1 }}>{note}</div>}
       </div>
     </div>
   )

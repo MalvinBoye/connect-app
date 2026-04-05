@@ -19,47 +19,41 @@ export default function AuthScreen() {
   }
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '40px 24px 24px' }}>
-      <div style={{ marginBottom: 40 }}>
-        <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.5px', color: 'var(--color-teal)' }}>
-          connect
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '52px 28px 32px' }}>
+
+      {/* Wordmark */}
+      <div style={{ marginBottom: 52 }}>
+        <div style={{ fontSize: 42, fontWeight: 400, letterSpacing: '-0.01em', color: 'var(--brown)', lineHeight: 1 }}>
+          Connect
         </div>
-        <p style={{ fontSize: 13, color: 'var(--color-gray-400)', marginTop: 6 }}>
-          Dating designed to actually work
-        </p>
+        <div style={{ fontSize: 10, color: 'var(--sage)', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: 6 }}>
+          キルケー · Circeé
+        </div>
       </div>
 
-      <h2 style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.4px', marginBottom: 24 }}>
-        {mode === 'signin' ? 'Welcome back' : 'Create your account'}
+      <h2 style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 6 }}>
+        {mode === 'signin' ? 'Welcome back.' : 'Create your account.'}
       </h2>
+      <p style={{ fontSize: 12, color: 'var(--brown-light)', marginBottom: 28, lineHeight: 1.6 }}>
+        {mode === 'signin' ? 'Sign in to continue.' : 'Dating designed to actually work.'}
+      </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          style={inputStyle}
+          type="email" placeholder="Email address"
+          value={email} onChange={e => setEmail(e.target.value)}
+          className="field-input"
         />
         <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
+          type="password" placeholder="Password"
+          value={password} onChange={e => setPassword(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handle()}
-          style={inputStyle}
+          className="field-input"
         />
       </div>
 
       {error && (
-        <div style={{
-          padding: '10px 14px',
-          background: '#fff0f0',
-          border: '1px solid #ffcccc',
-          borderRadius: 'var(--radius-sm)',
-          fontSize: 12, color: '#cc0000',
-          marginBottom: 16,
-        }}>
+        <div style={{ padding: '10px 14px', border: '1px solid rgba(180,60,60,0.3)', borderRadius: 'var(--radius-md)', fontSize: 12, color: '#8B2020', marginBottom: 16, background: 'rgba(180,60,60,0.06)' }}>
           {error}
         </div>
       )}
@@ -67,45 +61,24 @@ export default function AuthScreen() {
       <button
         onClick={handle}
         disabled={loading || !email || !password}
-        style={{
-          padding: '15px',
-          borderRadius: 'var(--radius-full)',
-          background: email && password ? 'var(--color-black)' : 'var(--color-gray-200)',
-          color: email && password ? 'white' : 'var(--color-gray-400)',
-          fontSize: 15, fontWeight: 500,
-          cursor: email && password ? 'pointer' : 'default',
-          marginBottom: 16,
-        }}
+        className="btn-primary"
+        style={{ width: '100%', marginBottom: 12 }}
       >
-        {loading ? 'Please wait…' : mode === 'signin' ? 'Sign in' : 'Create account'}
+        {loading ? '...' : mode === 'signin' ? 'Sign in' : 'Create account'}
       </button>
 
       <button
         onClick={() => { setMode(m => m === 'signin' ? 'signup' : 'signin'); setError(null) }}
-        style={{
-          background: 'none',
-          fontSize: 13, color: 'var(--color-gray-600)',
-          textAlign: 'center',
-        }}
+        style={{ fontSize: 12, color: 'var(--brown-light)', textAlign: 'center', padding: '8px 0' }}
       >
         {mode === 'signin' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
       </button>
 
-      <div style={{ marginTop: 'auto', padding: '16px 0 0' }}>
-        <p style={{ fontSize: 11, color: 'var(--color-gray-400)', textAlign: 'center', lineHeight: 1.6 }}>
-          No dark patterns. No upsells. Flat subscription. Your data is never sold.
+      <div style={{ marginTop: 'auto', paddingTop: 32 }}>
+        <p style={{ fontSize: 10, color: 'var(--sage)', textAlign: 'center', lineHeight: 1.8, letterSpacing: '0.04em' }}>
+          No dark patterns. No upsells.<br/>Your data is never sold.
         </p>
       </div>
     </div>
   )
-}
-
-const inputStyle: React.CSSProperties = {
-  padding: '13px 16px',
-  border: '1px solid var(--color-gray-200)',
-  borderRadius: 'var(--radius-md)',
-  fontFamily: 'var(--font)',
-  fontSize: 14,
-  outline: 'none',
-  width: '100%',
 }

@@ -16,53 +16,36 @@ export default function ReflectionAcceptScreen() {
     setLoading(true)
     const { matched, matchId } = await recordSwipe(myProfile.id, targetId, 'connect')
     setLoading(false)
-    if (matched && matchId) {
-      navigate('/matched', { state: { matchId, targetName } })
-    } else {
-      navigate('/profile')
-    }
+    if (matched && matchId) navigate('/matched', { state: { matchId, targetName } })
+    else navigate('/profile')
   }
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '28px 24px 20px', overflow: 'auto' }}>
-      <button onClick={() => navigate('/profile')} style={{ background: 'none', alignSelf: 'flex-start', marginBottom: 24, color: 'var(--color-gray-400)', display: 'flex', alignItems: 'center', gap: 6 }}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-        <span style={{ fontSize: 13 }}>Back</span>
+    <div className="screen" style={{ padding: '32px 24px 24px' }}>
+      <button onClick={() => navigate('/profile')} style={{ alignSelf: 'flex-start', marginBottom: 32, color: 'var(--brown-light)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2.5L4.5 7 9 11.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        Back
       </button>
 
-      <div style={{ marginBottom: 28 }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', background: 'var(--color-teal-dim)', borderRadius: 'var(--radius-full)', marginBottom: 12 }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-teal)' }} />
-          <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--color-teal)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Reflection</span>
-        </div>
-        <h2 style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.4px', lineHeight: 1.25 }}>Before you connect with {targetName ?? 'them'}</h2>
-        <p style={{ fontSize: 13, color: 'var(--color-gray-600)', marginTop: 8, lineHeight: 1.5 }}>Taking a moment to reflect leads to more meaningful conversations.</p>
-      </div>
+      <div style={{ fontSize: 9, color: 'var(--sage)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 10 }}>Reflection</div>
+      <h2 style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 6, lineHeight: 1.2 }}>Before you connect with {targetName ?? 'them'}.</h2>
+      <p style={{ fontSize: 12, color: 'var(--brown-light)', marginBottom: 28, lineHeight: 1.7 }}>A moment of intention leads to better conversations.</p>
 
-      <div style={{ padding: '18px', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-md)', marginBottom: 16, background: 'var(--color-white)' }}>
-        <p style={{ fontSize: 15, fontWeight: 500, lineHeight: 1.5, letterSpacing: '-0.2px' }}>
+      <div style={{ padding: '16px 18px', border: '1px solid var(--brown-border)', borderRadius: 'var(--radius-md)', marginBottom: 16 }}>
+        <p style={{ fontSize: 13, fontStyle: 'italic', lineHeight: 1.7, color: 'var(--brown)' }}>
           "What made you want to connect with {targetName ?? 'this person'}?"
         </p>
       </div>
 
-      <textarea
-        value={response}
-        onChange={e => setResponse(e.target.value)}
-        placeholder="Share your thoughts… (optional)"
-        style={{ flex: 1, minHeight: 120, padding: '14px 16px', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-md)', resize: 'none', fontFamily: 'var(--font)', fontSize: 14, lineHeight: 1.6, outline: 'none', marginBottom: 16 }}
-      />
+      <textarea value={response} onChange={e => setResponse(e.target.value)} placeholder="Share your thoughts… (optional)" style={{ width: '100%', minHeight: 110, padding: '14px 16px', border: '1px solid var(--brown-border)', borderRadius: 'var(--radius-md)', resize: 'none', fontFamily: 'var(--font)', fontSize: 13, background: 'var(--cream)', color: 'var(--brown)', outline: 'none', lineHeight: 1.7, marginBottom: 14 }} />
 
-      <div style={{ padding: '12px 14px', background: 'var(--color-gray-100)', borderRadius: 'var(--radius-sm)', marginBottom: 20 }}>
-        <p style={{ fontSize: 12, color: 'var(--color-gray-600)', lineHeight: 1.5 }}>Your response is only for you — it won't be sent to {targetName ?? 'them'}.</p>
+      <div style={{ padding: '10px 14px', background: 'var(--sage-dim)', borderRadius: 'var(--radius-sm)', marginBottom: 24 }}>
+        <p style={{ fontSize: 11, color: 'var(--sage)', lineHeight: 1.6 }}>This is just for you — it won't be shared.</p>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <button onClick={confirm} disabled={loading} style={{ padding: '15px', borderRadius: 'var(--radius-full)', background: 'var(--color-black)', color: 'white', fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>
-          {loading ? 'Sending…' : 'Send connection request'}
-        </button>
-        <button onClick={() => navigate('/profile')} style={{ padding: '15px', borderRadius: 'var(--radius-full)', background: 'transparent', border: '1px solid var(--color-gray-200)', color: 'var(--color-gray-600)', fontSize: 14, fontWeight: 500, cursor: 'pointer' }}>
-          Go back
-        </button>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 'auto' }}>
+        <button onClick={confirm} disabled={loading} className="btn-primary" style={{ width: '100%' }}>{loading ? '...' : 'Send connection request'}</button>
+        <button onClick={() => navigate('/profile')} className="btn-secondary" style={{ width: '100%' }}>Go back</button>
       </div>
     </div>
   )
