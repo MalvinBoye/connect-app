@@ -204,8 +204,8 @@ function ProfileRow({ profile, expanded, onToggle, onConnect, onPass, loading }:
             </div>
             {[
               ['Age range', score.ageRange, 15],
-              ['Shared interests', score.bioOverlap, 25],
-              ['Mutual signals', score.mutualInterest, 20],
+              ['Interest compatibility', score.interestScore, 30],
+              ['Mutual signals', score.mutualInterest, 15],
               ['Recently active', score.recency, 15],
               ['Profile complete', score.completeness, 10],
               ['Response rate', score.responseRate, 10],
