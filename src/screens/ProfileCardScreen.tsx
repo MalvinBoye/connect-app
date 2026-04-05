@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
-import { ScoredProfile, getTodaysProfiles, getDailyRemaining } from '../lib/matching'
+import { ScoredProfile, getTodaysProfiles, getDailyRemaining, recordSwipe } from '../lib/matching'
 
 export default function ProfileCardScreen() {
   const navigate = useNavigate()
-  const { profile: myProfile, signOut } = useAuth()
+  const { profile: myProfile } = useAuth()
   const [profiles, setProfiles] = useState<ScoredProfile[]>([])
-  const [current, setCurrent] = useState(0)
   const [remaining, setRemaining] = useState(5)
-  const [expanded, setExpanded] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [expanded, setExpanded] = useState<string | null>(null)
+  const [actioned, setActioned] = useState<Record<string, 'connect' | 'pass'>>({})
+  const [connecting, setConnecting] = useState<string | null>(null)
 
   useEffect(() => {
     if (!myProfile) return
-    loadProfiles()
+    load()
   }, [myProfile])
 
-  const loadProfiles = async () => {
+  const load = async () => {
     setLoading(true)
     const [fetched, rem] = await Promise.all([
       getTodaysProfiles(myProfile!.id, myProfile!),
@@ -28,126 +29,263 @@ export default function ProfileCardScreen() {
     setLoading(false)
   }
 
-  const handleSwipe = (action: 'connect' | 'pass') => {
-    const target = profiles[current]
-    if (!target) return
-    setExpanded(false)
-    if (action === 'pass') {
-      navigate('/reflection-pass', { state: { targetId: target.id, targetName: target.name } })
-    } else {
-      navigate('/reflection-accept', { state: { targetId: target.id, targetName: target.name } })
+  const handleConnect = async (e: React.MouseEvent, profileId: string) => {
+    e.stopPropagation()
+    if (!myProfile || connecting) return
+    setConnecting(profileId)
+    const { matched, matchId } = await recordSwipe(myProfile.id, profileId, 'connect')
+    setActioned(prev => ({ ...prev, [profileId]: 'connect' }))
+    setConnecting(null)
+    if (matched && matchId) {
+      const p = profiles.find(p => p.id === profileId)
+      navigate('/matched', { state: { matchId, targetName: p?.name } })
     }
   }
 
-  const activeProfile = profiles[current]
-
-  if (loading) return <LoadingState />
-  if (remaining === 0 || profiles.length === 0) {
-    navigate('/completion')
-    return null
+  const handlePass = async (e: React.MouseEvent, profileId: string) => {
+    e.stopPropagation()
+    if (!myProfile || connecting) return
+    setConnecting(profileId)
+    await recordSwipe(myProfile.id, profileId, 'pass')
+    setActioned(prev => ({ ...prev, [profileId]: 'pass' }))
+    setConnecting(null)
   }
 
-  const score = activeProfile.score
+  const toggleExpand = (id: string) => {
+    setExpanded(prev => prev === id ? null : id)
+  }
+
+  if (loading) return <LoadingState />
+
+  const activeProfiles = profiles.filter(p => !actioned[p.id])
+  const done = remaining === 0 || activeProfiles.length === 0
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--color-gray-100)', overflow: 'hidden' }}>
-      {/* Nav */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px', background: 'white', borderBottom: '1px solid var(--color-gray-200)' }}>
-        <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--color-teal)' }}>connect</div>
-        <div style={{ fontSize: 12, color: 'var(--color-gray-400)' }}>{remaining} left today</div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={() => navigate('/transparency')} style={{ background: 'none', color: 'var(--color-gray-600)' }}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8.5" stroke="currentColor" strokeWidth="1.2"/><path d="M10 6V10.5M10 13.5V14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>
+    <div className="screen">
+      {/* Header */}
+      <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid var(--color-gray-200)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, background: 'white', zIndex: 10 }}>
+        <div>
+          <h1 style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.4px', color: 'var(--color-teal)' }}>connect</h1>
+          <p style={{ fontSize: 11, color: 'var(--color-gray-400)', marginTop: 1 }}>Potential Partners</p>
+        </div>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <div style={{ padding: '4px 10px', background: 'var(--color-teal-dim)', borderRadius: 'var(--radius-full)' }}>
+            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-teal)' }}>{remaining} left today</span>
+          </div>
+          <button onClick={() => navigate('/transparency')} style={{ color: 'var(--color-gray-400)', padding: 4 }}>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <circle cx="9" cy="9" r="7.5" stroke="currentColor" strokeWidth="1.2"/>
+              <path d="M9 5.5V9.5M9 12V12.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+            </svg>
           </button>
-          <button onClick={() => navigate('/messages')} style={{ background: 'none', color: 'var(--color-gray-600)' }}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 4h14a1 1 0 011 1v8a1 1 0 01-1 1H6l-4 3V5a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2"/></svg>
-          </button>
-          <button onClick={signOut} style={{ background: 'none', color: 'var(--color-gray-600)', fontSize: 11 }}>Out</button>
         </div>
       </div>
 
-      {/* Card */}
-      <div style={{ flex: 1, padding: '16px 16px 0', overflow: 'auto' }}>
-        <div style={{ background: 'white', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--color-gray-200)' }}>
+      {done ? (
+        <DoneState remaining={remaining} total={profiles.length} />
+      ) : (
+        <div style={{ padding: '8px 0' }}>
+          {activeProfiles.map(p => (
+            <ProfileRow
+              key={p.id}
+              profile={p}
+              expanded={expanded === p.id}
+              onToggle={() => toggleExpand(p.id)}
+              onConnect={(e) => handleConnect(e, p.id)}
+              onPass={(e) => handlePass(e, p.id)}
+              loading={connecting === p.id}
+            />
+          ))}
 
-          {/* Photo */}
-          <div style={{ height: 280, background: activeProfile.avatar_url ? `url(${activeProfile.avatar_url}) center/cover` : 'linear-gradient(160deg, #e8f0ef, #d0e4e3)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {!activeProfile.avatar_url && <div style={{ fontSize: 56, color: 'var(--color-teal)', opacity: 0.3, fontWeight: 700 }}>{activeProfile.name[0]}</div>}
-            {/* Compatibility badge */}
-            <div style={{ position: 'absolute', top: 12, right: 12, background: 'white', borderRadius: 'var(--radius-full)', padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 5 }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: scoreColor(score.total) }} />
-              <span style={{ fontSize: 12, fontWeight: 600, color: scoreColor(score.total) }}>{score.total}% match</span>
+          {/* Already actioned — faded */}
+          {Object.keys(actioned).length > 0 && (
+            <div style={{ padding: '12px 16px' }}>
+              <p style={{ fontSize: 11, color: 'var(--color-gray-400)', textAlign: 'center' }}>
+                {Object.values(actioned).filter(a => a === 'connect').length} connection{Object.values(actioned).filter(a => a === 'connect').length !== 1 ? 's' : ''} sent today
+              </p>
             </div>
-            <div style={{ position: 'absolute', bottom: 16, left: 16 }}>
-              <div style={{ fontSize: 22, fontWeight: 600, color: activeProfile.avatar_url ? 'white' : 'var(--color-black)', textShadow: activeProfile.avatar_url ? '0 1px 4px rgba(0,0,0,0.5)' : 'none' }}>
-                {activeProfile.name}, {activeProfile.age}
-              </div>
-            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ProfileRow({ profile, expanded, onToggle, onConnect, onPass, loading }: {
+  profile: ScoredProfile
+  expanded: boolean
+  onToggle: () => void
+  onConnect: (e: React.MouseEvent) => void
+  onPass: (e: React.MouseEvent) => void
+  loading: boolean
+}) {
+  const score = profile.score
+
+  return (
+    <div style={{ borderBottom: '1px solid var(--color-gray-200)' }}>
+      {/* Row */}
+      <div
+        onClick={onToggle}
+        style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', cursor: 'pointer', background: expanded ? 'var(--color-gray-100)' : 'white', transition: 'background 0.15s' }}
+      >
+        {/* Avatar */}
+        <div style={{
+          width: 56, height: 56, borderRadius: '50%', flexShrink: 0,
+          background: profile.avatar_url ? `url(${profile.avatar_url}) center/cover` : 'var(--color-teal-dim)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 20, fontWeight: 700, color: 'var(--color-teal)',
+          position: 'relative',
+        }}>
+          {!profile.avatar_url && profile.name[0]}
+          {/* Score ring indicator */}
+          <div style={{
+            position: 'absolute', bottom: -2, right: -2,
+            width: 18, height: 18, borderRadius: '50%',
+            background: scoreColor(score.total),
+            border: '2px solid white',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span style={{ fontSize: 7, fontWeight: 700, color: 'white' }}>{score.total}</span>
           </div>
+        </div>
 
-          {/* Info */}
-          <div style={{ padding: '14px 16px 12px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 10px', background: 'var(--color-teal-dim)', borderRadius: 'var(--radius-full)', marginBottom: 10 }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-teal)' }} />
-              <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--color-teal)' }}>{intentionLabel(activeProfile.intention)}</span>
+        {/* Info */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+            <span style={{ fontSize: 15, fontWeight: 600, letterSpacing: '-0.2px' }}>{profile.name}, {profile.age}</span>
+          </div>
+          {/* Tags */}
+          <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+            <Tag>{intentionLabel(profile.intention)}</Tag>
+            {score.reasons.slice(0, 2).map(r => <Tag key={r}>{r}</Tag>)}
+          </div>
+        </div>
+
+        {/* Connect button */}
+        <button
+          onClick={onConnect}
+          disabled={loading}
+          style={{
+            flexShrink: 0,
+            padding: '8px 14px',
+            borderRadius: 'var(--radius-full)',
+            background: loading ? 'var(--color-gray-200)' : 'var(--color-black)',
+            color: loading ? 'var(--color-gray-400)' : 'white',
+            fontSize: 12, fontWeight: 600,
+            cursor: loading ? 'default' : 'pointer',
+            transition: 'all 0.15s',
+            border: 'none',
+          }}
+        >
+          {loading ? '…' : 'Connect'}
+        </button>
+      </div>
+
+      {/* Expanded detail */}
+      {expanded && (
+        <div style={{ padding: '0 16px 16px', background: 'var(--color-gray-100)', borderTop: '1px solid var(--color-gray-200)' }}>
+
+          {/* Full photo if available */}
+          {profile.avatar_url && (
+            <div style={{ height: 200, background: `url(${profile.avatar_url}) center/cover`, borderRadius: 'var(--radius-md)', marginBottom: 14, marginTop: 14 }} />
+          )}
+
+          {/* Bio */}
+          {profile.bio && (
+            <p style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--color-gray-800)', marginBottom: 14, marginTop: profile.avatar_url ? 0 : 14 }}>
+              {profile.bio}
+            </p>
+          )}
+
+          {/* Score breakdown */}
+          <div style={{ padding: '12px 14px', background: 'white', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-gray-200)', marginBottom: 14 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--color-gray-400)', marginBottom: 10 }}>
+              Why you're seeing {profile.name}
             </div>
-
-            {/* Top reasons */}
-            {score.reasons.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
-                {score.reasons.slice(0, 3).map(r => (
-                  <div key={r} style={{ padding: '3px 9px', background: 'var(--color-gray-100)', borderRadius: 'var(--radius-full)', fontSize: 11, color: 'var(--color-gray-600)' }}>{r}</div>
-                ))}
-              </div>
-            )}
-
-            {activeProfile.bio && <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--color-gray-800)', marginBottom: 12 }}>{activeProfile.bio}</p>}
-
-            {/* Transparency panel */}
-            <button onClick={() => setExpanded(!expanded)} style={{ width: '100%', padding: '10px 14px', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-sm)', background: 'var(--color-gray-100)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
-              <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--color-gray-600)' }}>Why you're seeing {activeProfile.name} — full breakdown</span>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: '0.2s' }}><path d="M3 5L7 9L11 5" stroke="var(--color-gray-400)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-
-            {expanded && (
-              <div style={{ padding: '14px', border: '1px solid var(--color-gray-200)', borderTop: 'none', borderRadius: '0 0 var(--radius-sm) var(--radius-sm)', background: 'white' }}>
-                {[
-                  ['Age range', score.ageRange, 15],
-                  ['Shared interests', score.bioOverlap, 25],
-                  ['Mutual signals', score.mutualInterest, 20],
-                  ['Recently active', score.recency, 15],
-                  ['Profile completeness', score.completeness, 10],
-                  ['Response rate', score.responseRate, 10],
-                  ['Relationship readiness', score.readiness, 5],
-                ].map(([label, pts, max]) => (
-                  <div key={label as string} style={{ marginBottom: 10 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{ fontSize: 11, color: 'var(--color-gray-600)' }}>{label}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-teal)' }}>{pts}/{max}</span>
-                    </div>
-                    <div style={{ height: 4, background: 'var(--color-gray-200)', borderRadius: 2 }}>
-                      <div style={{ height: '100%', width: `${((pts as number) / (max as number)) * 100}%`, background: 'var(--color-teal)', borderRadius: 2, transition: 'width 0.3s' }} />
-                    </div>
-                  </div>
-                ))}
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--color-gray-200)', paddingTop: 10, marginTop: 4 }}>
-                  <span style={{ fontSize: 12, fontWeight: 600 }}>Total match score</span>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: scoreColor(score.total) }}>{score.total}/100</span>
+            {[
+              ['Age range', score.ageRange, 15],
+              ['Shared interests', score.bioOverlap, 25],
+              ['Mutual signals', score.mutualInterest, 20],
+              ['Recently active', score.recency, 15],
+              ['Profile complete', score.completeness, 10],
+              ['Response rate', score.responseRate, 10],
+              ['Readiness match', score.readiness, 5],
+            ].map(([label, pts, max]) => (
+              <div key={label as string} style={{ marginBottom: 8 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                  <span style={{ fontSize: 11, color: 'var(--color-gray-600)' }}>{label}</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-teal)' }}>{pts}/{max}</span>
                 </div>
-                <p style={{ fontSize: 11, color: 'var(--color-gray-400)', marginTop: 10, lineHeight: 1.5 }}>
-                  This score is shown to you in full. No hidden factors. Payment never affects ranking.
-                </p>
+                <div style={{ height: 3, background: 'var(--color-gray-200)', borderRadius: 2 }}>
+                  <div style={{ height: '100%', width: `${((pts as number) / (max as number)) * 100}%`, background: 'var(--color-teal)', borderRadius: 2 }} />
+                </div>
               </div>
-            )}
+            ))}
+            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--color-gray-200)', paddingTop: 8, marginTop: 4 }}>
+              <span style={{ fontSize: 12, fontWeight: 600 }}>Match score</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: scoreColor(score.total) }}>{score.total}/100</span>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              onClick={onPass}
+              disabled={loading}
+              style={{ flex: 1, padding: '13px', borderRadius: 'var(--radius-full)', border: '1px solid var(--color-gray-200)', background: 'white', fontSize: 14, fontWeight: 500, cursor: 'pointer' }}
+            >
+              Pass
+            </button>
+            <button
+              onClick={onConnect}
+              disabled={loading}
+              style={{ flex: 1, padding: '13px', borderRadius: 'var(--radius-full)', background: 'var(--color-black)', color: 'white', fontSize: 14, fontWeight: 500, cursor: 'pointer', border: 'none' }}
+            >
+              {loading ? 'Sending…' : 'Connect'}
+            </button>
           </div>
         </div>
-      </div>
+      )}
+    </div>
+  )
+}
 
-      {/* Actions */}
-      <div style={{ padding: '14px 20px', display: 'flex', gap: 12, background: 'var(--color-gray-100)' }}>
-        <button onClick={() => handleSwipe('pass')} style={{ flex: 1, padding: '14px', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-full)', background: 'white', fontSize: 14, fontWeight: 500, cursor: 'pointer' }}>Pass</button>
-        <button onClick={() => handleSwipe('connect')} style={{ flex: 1, padding: '14px', border: 'none', borderRadius: 'var(--radius-full)', background: 'var(--color-black)', color: 'white', fontSize: 14, fontWeight: 500, cursor: 'pointer' }}>Connect</button>
+function Tag({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ padding: '2px 8px', background: 'var(--color-gray-100)', borderRadius: 'var(--radius-full)', fontSize: 10, color: 'var(--color-gray-600)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 120 }}>
+      {children}
+    </div>
+  )
+}
+
+function DoneState({ remaining, total }: { remaining: number, total: number }) {
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', textAlign: 'center' }}>
+      <div style={{ width: 64, height: 64, borderRadius: '50%', border: '2px solid var(--color-teal)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <path d="M6 14L11 19L22 9" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
       </div>
+      <h2 style={{ fontSize: 20, fontWeight: 600, letterSpacing: '-0.4px', marginBottom: 8 }}>You're done for today</h2>
+      <p style={{ fontSize: 13, color: 'var(--color-gray-600)', lineHeight: 1.6, maxWidth: 260, marginBottom: 20 }}>
+        {remaining === 0 ? "You've reviewed all 5 profiles for today." : "No more matches in your area right now."}
+        {' '}Come back tomorrow for new people.
+      </p>
+      <div style={{ padding: '12px 16px', background: 'var(--color-teal-dim)', borderRadius: 'var(--radius-md)', maxWidth: 280 }}>
+        <p style={{ fontSize: 12, color: 'var(--color-teal)', lineHeight: 1.6 }}>
+          We limit to 5 profiles a day intentionally. Fewer choices, more thought, better connections.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function LoadingState() {
+  return (
+    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12 }}>
+      <div style={{ width: 28, height: 28, border: '2px solid var(--color-gray-200)', borderTop: '2px solid var(--color-teal)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <p style={{ fontSize: 13, color: 'var(--color-gray-400)' }}>Finding your matches…</p>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
 }
@@ -161,14 +299,4 @@ function scoreColor(score: number) {
 function intentionLabel(intention: string) {
   const map: Record<string, string> = { relationship: 'Long-term relationship', dating: 'Dating & seeing where it goes', connection: 'Meaningful connection', friendship: 'Friendship first' }
   return map[intention] ?? intention
-}
-
-function LoadingState() {
-  return (
-    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12 }}>
-      <div style={{ width: 32, height: 32, border: '2px solid var(--color-gray-200)', borderTop: '2px solid var(--color-teal)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-      <p style={{ fontSize: 13, color: 'var(--color-gray-400)' }}>Finding your best matches…</p>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-    </div>
-  )
 }

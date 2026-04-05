@@ -1,92 +1,117 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect, useRef } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
-import { getMatches } from '../lib/matching'
-import { Match } from '../lib/supabase'
-import { supabase } from '../lib/supabase'
+import { supabase, Message, Profile } from '../lib/supabase'
 
 export default function MessagesScreen() {
   const navigate = useNavigate()
-  const { profile } = useAuth()
-  const [matches, setMatches] = useState<Match[]>([])
+  const location = useLocation()
+  const { profile: myProfile } = useAuth()
+  const { matchId, otherProfile } = (location.state ?? {}) as { matchId: string; otherProfile: Profile }
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState('')
   const [loading, setLoading] = useState(true)
-  const [lastMessages, setLastMessages] = useState<Record<string, string>>({})
+  const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!profile) return
-    loadMatches()
-  }, [profile])
+    if (!matchId) { navigate('/connections'); return }
+    fetchMessages()
+    const channel = supabase.channel(`match-${matchId}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
+        (payload) => setMessages(prev => [...prev, payload.new as Message]))
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [matchId])
 
-  const loadMatches = async () => {
-    setLoading(true)
-    const data = await getMatches(profile!.id)
-    setMatches(data)
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
 
-    // Fetch last message for each match
-    const msgs: Record<string, string> = {}
-    await Promise.all(data.map(async (m) => {
-      const { data: last } = await supabase
-        .from('messages')
-        .select('content, created_at')
-        .eq('match_id', m.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
-      if (last) msgs[m.id] = last.content
-    }))
-    setLastMessages(msgs)
+  const fetchMessages = async () => {
+    const { data } = await supabase.from('messages').select('*').eq('match_id', matchId).order('created_at', { ascending: true })
+    setMessages(data ?? [])
     setLoading(false)
   }
 
-  if (loading) return (
-    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ fontSize: 13, color: 'var(--color-gray-400)' }}>Loading…</p>
-    </div>
-  )
+  const send = async () => {
+    if (!input.trim() || !myProfile || !matchId) return
+    const content = input.trim()
+    setInput('')
+    await supabase.from('messages').insert({ match_id: matchId, sender_id: myProfile.id, content })
+  }
+
+  const daysSinceMatch = messages.length > 10 ? 5 : 0
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      <div style={{ padding: '16px 20px 14px', background: 'var(--color-white)', borderBottom: '1px solid var(--color-gray-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.4px' }}>Connections</h2>
-        <button onClick={() => navigate('/profile')} style={{ background: 'none', fontSize: 13, color: 'var(--color-teal)', fontWeight: 500 }}>Discover</button>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', height: '100%' }}>
+      {/* Header */}
+      <div style={{ padding: '12px 16px', background: 'white', borderBottom: '1px solid var(--color-gray-200)', display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+        <button onClick={() => navigate('/connections')} style={{ color: 'var(--color-gray-600)' }}>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M13 4L7 10L13 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </button>
+        <div style={{ width: 38, height: 38, borderRadius: '50%', background: otherProfile?.avatar_url ? `url(${otherProfile.avatar_url}) center/cover` : 'var(--color-teal-dim)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 600, color: 'var(--color-teal)' }}>
+          {!otherProfile?.avatar_url && (otherProfile?.name?.[0] ?? '?')}
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 15, fontWeight: 600 }}>{otherProfile?.name ?? 'Match'}{otherProfile?.age ? `, ${otherProfile.age}` : ''}</div>
+          <div style={{ fontSize: 11, color: 'var(--color-gray-400)' }}>Connected</div>
+        </div>
       </div>
 
-      <div style={{ flex: 1, overflow: 'auto' }}>
-        {matches.length === 0 ? (
-          <div style={{ padding: 32, textAlign: 'center' }}>
-            <p style={{ fontSize: 14, color: 'var(--color-gray-400)', lineHeight: 1.6 }}>No connections yet. Keep browsing — matches appear here when both of you connect.</p>
+      {/* Move offline nudge */}
+      {daysSinceMatch >= 5 && (
+        <div style={{ padding: '10px 16px', background: 'var(--color-teal)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'white' }}>Ready to meet in person?</div>
+            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)' }}>Real connections happen offline.</p>
           </div>
-        ) : matches.map(match => (
-          <button
-            key={match.id}
-            onClick={() => navigate('/conversation', { state: { matchId: match.id, otherProfile: match.other_profile } })}
-            style={{ width: '100%', padding: '14px 16px', background: 'white', borderBottom: '1px solid var(--color-gray-200)', display: 'flex', gap: 12, alignItems: 'flex-start', cursor: 'pointer', textAlign: 'left' }}
-          >
-            <div style={{ width: 48, height: 48, borderRadius: '50%', background: match.other_profile?.avatar_url ? `url(${match.other_profile.avatar_url}) center/cover` : 'var(--color-teal-dim)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 600, color: 'var(--color-teal)' }}>
-              {!match.other_profile?.avatar_url && (match.other_profile?.name?.[0] ?? '?')}
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                <span style={{ fontSize: 14, fontWeight: 600 }}>{match.other_profile?.name ?? 'Unknown'}, {match.other_profile?.age}</span>
-                <span style={{ fontSize: 11, color: 'var(--color-gray-400)' }}>{formatTime(match.created_at)}</span>
+        </div>
+      )}
+
+      {/* Messages */}
+      <div style={{ flex: 1, overflow: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 10, background: 'var(--color-gray-100)' }}>
+        {loading ? (
+          <div style={{ textAlign: 'center', color: 'var(--color-gray-400)', fontSize: 13 }}>Loading…</div>
+        ) : messages.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: 24 }}>
+            <p style={{ fontSize: 13, color: 'var(--color-gray-400)', lineHeight: 1.6 }}>
+              You matched! Start the conversation.
+            </p>
+          </div>
+        ) : messages.map(msg => {
+          const isMe = msg.sender_id === myProfile?.id
+          return (
+            <div key={msg.id} style={{ display: 'flex', flexDirection: isMe ? 'row-reverse' : 'row', alignItems: 'flex-end', gap: 8 }}>
+              {!isMe && (
+                <div style={{ width: 26, height: 26, borderRadius: '50%', background: 'var(--color-teal-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 600, color: 'var(--color-teal)', flexShrink: 0 }}>
+                  {otherProfile?.name?.[0] ?? '?'}
+                </div>
+              )}
+              <div style={{ maxWidth: '74%' }}>
+                <div style={{ padding: '9px 13px', borderRadius: isMe ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: isMe ? 'var(--color-black)' : 'white', color: isMe ? 'white' : 'var(--color-black)', fontSize: 13, lineHeight: 1.5, boxShadow: 'var(--shadow-sm)' }}>
+                  {msg.content}
+                </div>
+                <div style={{ fontSize: 10, color: 'var(--color-gray-400)', marginTop: 2, textAlign: isMe ? 'right' : 'left' }}>
+                  {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
               </div>
-              <p style={{ fontSize: 13, color: 'var(--color-gray-600)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {lastMessages[match.id] ?? 'Say hello!'}
-              </p>
             </div>
-          </button>
-        ))}
+          )
+        })}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input */}
+      <div style={{ padding: '10px 12px', background: 'white', borderTop: '1px solid var(--color-gray-200)', display: 'flex', gap: 8, alignItems: 'flex-end', flexShrink: 0 }}>
+        <input
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && send()}
+          placeholder={`Message ${otherProfile?.name ?? 'them'}…`}
+          style={{ flex: 1, padding: '10px 14px', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-full)', fontFamily: 'var(--font)', fontSize: 13, outline: 'none', background: 'var(--color-gray-100)' }}
+        />
+        <button onClick={send} style={{ width: 36, height: 36, borderRadius: '50%', background: input.trim() ? 'var(--color-black)' : 'var(--color-gray-200)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: input.trim() ? 'pointer' : 'default', flexShrink: 0, transition: 'background 0.15s', border: 'none' }}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke={input.trim() ? 'white' : '#999'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </button>
       </div>
     </div>
   )
-}
-
-function formatTime(iso: string) {
-  const d = new Date(iso)
-  const now = new Date()
-  const diff = now.getTime() - d.getTime()
-  const days = Math.floor(diff / 86400000)
-  if (days === 0) return 'Today'
-  if (days === 1) return '1d'
-  return `${days}d`
 }
