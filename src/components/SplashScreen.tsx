@@ -9,9 +9,9 @@ export default function SplashScreen({ onDone }: SplashScreenProps) {
 
   useEffect(() => {
     // C appears
-    const t1 = setTimeout(() => setPhase('drop'), 600)   // onnect drops
-    const t2 = setTimeout(() => setPhase('click'), 1300) // they click together
-    const t3 = setTimeout(() => setPhase('done'), 2200)  // hold, then fade out
+    const t1 = setTimeout(() => setPhase('drop'), 600)   
+    const t2 = setTimeout(() => setPhase('click'), 1300) 
+    const t3 = setTimeout(() => setPhase('done'), 2200) 
     const t4 = setTimeout(() => onDone(), 2800)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, [])
@@ -59,7 +59,7 @@ export default function SplashScreen({ onDone }: SplashScreenProps) {
         <path d="M120 380 Q98 394 82 376 Q102 372 120 380Z" fill="#4A4020" opacity="0.45"/>
       </svg>
 
-      {/* Japanese stamp — top left */}
+      {/* Wanted to add some flare to the design */}
       <div style={{
         position: 'absolute', top: 32, left: 28,
         display: 'flex', flexDirection: 'column', gap: 2,
@@ -73,7 +73,7 @@ export default function SplashScreen({ onDone }: SplashScreenProps) {
         ))}
       </div>
 
-      {/* Animated wordmark */}
+      {/* wordmark */}
       <div style={{
         display: 'flex', alignItems: 'flex-end',
         position: 'relative', height: 120,

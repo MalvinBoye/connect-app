@@ -7,7 +7,6 @@
 }
 
 :root {
-  /* Palette */
   --cream: #F4F1E8;
   --cream-dark: #EDE9DC;
   --brown: #2C2416;
@@ -18,21 +17,13 @@
   --sage-light: #C8C9A3;
   --sage-dim: rgba(138, 140, 106, 0.15);
   --sage-bg: #D6D8B8;
-
-  /* Typography */
   --font: 'Courier Prime', 'Courier New', Courier, monospace;
-
-  /* Radii */
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 18px;
   --radius-full: 999px;
-
-  /* Shadows */
   --shadow-sm: 0 1px 4px rgba(44,36,22,0.07);
   --shadow-md: 0 4px 16px rgba(44,36,22,0.10);
-
-  /* Layout */
   --nav-height: 62px;
   --max-width: 480px;
 }

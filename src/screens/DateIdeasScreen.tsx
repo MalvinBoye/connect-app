@@ -1,18 +1,18 @@
 import React, { useState } from 'react'
 
 const ideas = [
-  { category: 'Low pressure', emoji: '☕', title: 'Coffee walk', desc: 'Meet at a café, grab drinks, walk and talk. 45 min max. No awkward sitting face-to-face.' },
-  { category: 'Low pressure', emoji: '📚', title: 'Bookstore browse', desc: 'Wander a bookstore together. What you pick up says more than any profile.' },
-  { category: 'Low pressure', emoji: '🌳', title: 'Park meetup', desc: 'A bench, some sun, easy conversation. Bring snacks.' },
-  { category: 'Active', emoji: '🚴', title: 'Bike ride', desc: 'Rent bikes and explore the city. Great for conversation in short bursts.' },
-  { category: 'Active', emoji: '🧗', title: 'Climbing gym', desc: 'Bouldering together is surprisingly revealing. Collaborative and fun.' },
-  { category: 'Active', emoji: '🎾', title: 'Tennis / padel', desc: 'Competitive but playful. You learn a lot about someone from how they handle losing.' },
-  { category: 'Creative', emoji: '🎨', title: 'Paint together', desc: 'Drop-in painting class or just supplies from a craft store. Low stakes, high fun.' },
-  { category: 'Creative', emoji: '🍳', title: 'Cook something', desc: 'Pick a recipe neither of you has made. The chaos is half the point.' },
-  { category: 'Creative', emoji: '📸', title: 'Photo walk', desc: 'Walk around with your phones. Share what you each notice.' },
-  { category: 'Evening', emoji: '🎵', title: 'Live music', desc: 'A small venue show. Music fills silence naturally.' },
-  { category: 'Evening', emoji: '🎳', title: 'Bowling', desc: 'Retro, low-stakes, easy to laugh.' },
-  { category: 'Evening', emoji: '🌃', title: 'Rooftop or viewpoint', desc: 'Find somewhere with a good view. City lights and good conversation.' },
+  { category: 'Low pressure', emoji: '-', title: 'Coffee walk', desc: 'Meet at a café, grab drinks, chill likkle walk and talk. 45 min max. No awkward sitting face-to-face.' },
+  { category: 'Low pressure', emoji: '-', title: 'Bookstore browse', desc: 'Wander a bookstore together. What you pick up says more than any profile.' },
+  { category: 'Low pressure', emoji: '-', title: 'Park meetup', desc: 'A bench, some sun(preferably ㅇㅅㅇ), easy conversation. Bring snacks.' },
+  { category: 'Active', emoji: '-', title: 'Bike ride', desc: 'Rent bikes and explore the city. Great for conversation in short bursts.' },
+  { category: 'Active', emoji: '-', title: 'Climbing gym', desc: 'Bouldering together is surprisingly revealing. Collaborative and fun.' },
+  { category: 'Active', emoji: '-', title: 'Tennis / padel', desc: 'Competitive but playful. You learn a lot about someone from how they handle losing.' },
+  { category: 'Creative', emoji: '-', title: 'Paint together', desc: 'Drop-in painting class or just supplies from a craft store. Low stakes, high fun.' },
+  { category: 'Creative', emoji: '-', title: 'Cook something', desc: 'Pick a recipe neither of you has made. The chaos is half the point.' },
+  { category: 'Creative', emoji: '-', title: 'Photo walk', desc: 'Walk around with your phones. Share what you each notice.' },
+  { category: 'Evening', emoji: '-', title: 'Live music', desc: 'A small venue show. Music fills silence naturally.' },
+  { category: 'Evening', emoji: '-', title: 'Bowling', desc: 'Retro, low-stakes, easy to laugh.' },
+  { category: 'Evening', emoji: '-', title: 'Rooftop or viewpoint', desc: 'Find somewhere with a good view. City lights and good conversation.' },
 ]
 
 const categories = ['All', 'Low pressure', 'Active', 'Creative', 'Evening']

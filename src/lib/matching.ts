@@ -1,7 +1,6 @@
 import { supabase, Profile } from './supabase'
 import { scoreInterestCompatibility } from './interests'
-
-// ─── SCORE BREAKDOWN ────────────────────────────────────────────────────────
+//breakdown of the score
 export type ScoreBreakdown = {
   total: number
   ageRange: number
@@ -19,7 +18,7 @@ export type ScoredProfile = Profile & {
   score: ScoreBreakdown
 }
 
-// ─── MAIN ENTRY POINT ───────────────────────────────────────────────────────
+
 export async function getTodaysProfiles(
   userId: string,
   myProfile: Profile
@@ -60,7 +59,6 @@ export async function getTodaysProfiles(
   return scored.slice(0, remaining)
 }
 
-// ─── HARD FILTERS ───────────────────────────────────────────────────────────
 function passesHardFilters(candidate: Profile, me: Profile): boolean {
   if (me.looking_for && me.looking_for !== 'everyone') {
     if (candidate.gender !== me.looking_for) return false
@@ -71,7 +69,6 @@ function passesHardFilters(candidate: Profile, me: Profile): boolean {
   return true
 }
 
-// ─── SCORING ────────────────────────────────────────────────────────────────
 function scoreCandidate(
   candidate: Profile,
   me: Profile,
@@ -80,7 +77,7 @@ function scoreCandidate(
   const reasons: string[] = []
   let total = 0
 
-  // 1. AGE RANGE (0–15pts)
+  //agerange with weight (0–15pts)
   const myMin = (me as any).age_min ?? 18
   const myMax = (me as any).age_max ?? 99
   const theirMin = (candidate as any).age_min ?? 18
@@ -91,39 +88,36 @@ function scoreCandidate(
   if (ageRange === 15) reasons.push("Within each other's age range")
   else if (ageRange === 8) reasons.push('Within your age range')
 
-  // 2. INTEREST GRAPH (0–30pts)
   // Scores both exact matches and adjacent/complementary interests
   const interestResult = scoreInterestCompatibility(me.bio ?? '', candidate.bio ?? '')
   const interestScore = interestResult.score
   total += interestScore
   reasons.push(...interestResult.reasons.slice(0, 2))
 
-  // 3. MUTUAL INTEREST SIGNAL (0–15pts)
   // Does this candidate share interests with people you've already connected with?
   const mutualResult = scoreInterestCompatibility(connectedBios, candidate.bio ?? '')
   const mutualInterest = Math.min(15, Math.round(mutualResult.score * 0.5))
   total += mutualInterest
   if (mutualInterest > 7) reasons.push("Similar to people you've connected with")
 
-  // 4. RECENCY (0–15pts)
+  // recency(0–15pts)
   const lastActive = new Date((candidate as any).last_active ?? candidate.created_at)
   const daysSince = (Date.now() - lastActive.getTime()) / 86400000
   const recency = daysSince < 1 ? 15 : daysSince < 3 ? 12 : daysSince < 7 ? 8 : daysSince < 14 ? 4 : 0
   total += recency
   if (recency >= 12) reasons.push('Recently active')
-
-  // 5. PROFILE COMPLETENESS (0–10pts)
+ //completeness of profile (0–10pts)
   const completeness = (candidate.avatar_url ? 5 : 0) + (candidate.bio && candidate.bio.length > 20 ? 3 : 0) + (candidate.location ? 2 : 0)
   total += completeness
   if (completeness >= 8) reasons.push('Complete profile')
 
-  // 6. RESPONSE RATE (0–10pts)
   const rate = (candidate as any).response_rate ?? 1.0
   const responseRate = Math.round(rate * 10)
   total += responseRate
   if (rate >= 0.8) reasons.push('Responds to messages')
 
-  // 7. RELATIONSHIP READINESS (0–5pts)
+
+
   const myReadiness = (me as any).relationship_readiness ?? 3
   const theirReadiness = (candidate as any).relationship_readiness ?? 3
   const readiness = Math.abs(myReadiness - theirReadiness) === 0 ? 5 : Math.abs(myReadiness - theirReadiness) === 1 ? 3 : 1
@@ -133,7 +127,7 @@ function scoreCandidate(
   return { total, ageRange, interestScore, interestType: interestResult.type, mutualInterest, recency, completeness, responseRate, readiness, reasons }
 }
 
-// ─── RECORD SWIPE ───────────────────────────────────────────────────────────
+
 export async function recordSwipe(
   swiperId: string,
   swipedId: string,
@@ -157,8 +151,6 @@ export async function recordSwipe(
 
   return { matched: false, matchId: null, error: null }
 }
-
-// ─── GET MATCHES ─────────────────────────────────────────────────────────────
 export async function getMatches(userId: string) {
   const { data: matches, error } = await supabase
     .from('matches').select('*')
@@ -175,7 +167,7 @@ export async function getMatches(userId: string) {
   }))
 }
 
-// ─── DAILY REMAINING ─────────────────────────────────────────────────────────
+
 export async function getDailyRemaining(userId: string): Promise<number> {
   const { data } = await supabase
     .from('daily_swipes').select('count')
