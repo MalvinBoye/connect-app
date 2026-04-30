@@ -174,5 +174,5 @@ export async function getDailyRemaining(userId: string): Promise<number> {
     .eq('user_id', userId)
     .eq('swipe_date', new Date().toISOString().split('T')[0])
     .single()
-  return Math.max(0, 5 - (data?.count ?? 0))
+  return Math.max(0, 15 - (data?.count ?? 0))
 }

@@ -1,4 +1,4 @@
-// ─── INTEREST TAXONOMY ──────────────────────────────────────────────────────
+// INTEREST TAXONOMY
 // Each interest has: keywords (for bio extraction) and adjacent interests
 // Adjacency philosophy: interests that naturally lead you into each other's world
 
@@ -10,7 +10,7 @@ export type Interest = {
 }
 
 export const INTERESTS: Interest[] = [
-  // ── LANGUAGES & CULTURE ──
+  // LANGUAGES & CULTURE 
   {
     id: 'languages',
     label: 'Learning languages',
@@ -30,7 +30,6 @@ export const INTERESTS: Interest[] = [
     adjacent: ['languages', 'travel', 'history', 'reading', 'music', 'photography'],
   },
 
-  // ── OUTDOORS ──
   {
     id: 'hiking',
     label: 'Hiking & outdoors',
@@ -56,7 +55,7 @@ export const INTERESTS: Interest[] = [
     adjacent: ['fitness', 'cycling', 'yoga', 'hiking'],
   },
 
-  // ── CREATIVE ──
+  //CREATIVE 
   {
     id: 'photography',
     label: 'Photography',
@@ -82,7 +81,7 @@ export const INTERESTS: Interest[] = [
     adjacent: ['art', 'photography', 'technology', 'writing', 'architecture'],
   },
 
-  // ── MUSIC ──
+  //  MUSIC
   {
     id: 'music',
     label: 'Music',
@@ -96,7 +95,7 @@ export const INTERESTS: Interest[] = [
     adjacent: ['music', 'fitness', 'languages', 'culture', 'yoga'],
   },
 
-  // ── FOOD & DRINK ──
+  //  FOOD & DRINK 
   {
     id: 'cooking',
     label: 'Cooking',
@@ -110,7 +109,7 @@ export const INTERESTS: Interest[] = [
     adjacent: ['cooking', 'travel', 'culture', 'socializing'],
   },
 
-  // ── MIND ──
+  //  MIND 
   {
     id: 'reading',
     label: 'Reading',
@@ -196,7 +195,7 @@ export const INTERESTS: Interest[] = [
 // Build lookup maps
 const INTEREST_BY_ID = new Map<string, Interest>(INTERESTS.map(i => [i.id, i]))
 
-// ─── EXTRACT INTERESTS FROM BIO ─────────────────────────────────────────────
+//  EXTRACT INTERESTS FROM BIO
 export function extractInterests(bio: string): string[] {
   if (!bio) return []
   const lower = bio.toLowerCase()
@@ -210,7 +209,7 @@ export function extractInterests(bio: string): string[] {
   return found
 }
 
-// ─── SCORE INTEREST COMPATIBILITY ────────────────────────────────────────────
+// ─── SCORE INTEREST COMPATIBILITY 
 // Returns a score 0–30 and a list of match reasons
 export function scoreInterestCompatibility(
   myBio: string,
@@ -273,7 +272,7 @@ export function scoreInterestCompatibility(
   return { score: totalScore, reasons, type }
 }
 
-// ─── GET INTEREST LABELS FOR DISPLAY ────────────────────────────────────────
+// GET INTEREST LABELS FOR DISPLAY
 export function getInterestLabels(bio: string): string[] {
   return extractInterests(bio).map(id => INTEREST_BY_ID.get(id)?.label ?? id).slice(0, 5)
 }

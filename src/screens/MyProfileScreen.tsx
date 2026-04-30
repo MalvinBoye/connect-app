@@ -28,7 +28,6 @@ export default function MyProfileScreen() {
   const [error, setError] = useState<string | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-  // Edit state
   const [name, setName] = useState(profile?.name ?? '')
   const [bio, setBio] = useState(profile?.bio ?? '')
   const [intention, setIntention] = useState(profile?.intention ?? '')
@@ -96,11 +95,9 @@ export default function MyProfileScreen() {
   }
 
   const handleDeleteAccount = async () => {
-    // Sign out — actual deletion would require a server function
     await signOut()
   }
 
-  // ── SETTINGS VIEW ──────────────────────────────────────────────────────────
   if (showSettings) {
     return (
       <div className="screen" style={{ padding: '0 0 24px' }}>
@@ -181,7 +178,6 @@ export default function MyProfileScreen() {
     )
   }
 
-  // ── EDIT VIEW ──────────────────────────────────────────────────────────────
   if (editing) {
     return (
       <div className="screen" style={{ padding: '0 0 24px' }}>
@@ -249,7 +245,6 @@ export default function MyProfileScreen() {
     )
   }
 
-  // ── PROFILE VIEW ───────────────────────────────────────────────────────────
   return (
     <div className="screen">
       <div style={headerStyle}>
